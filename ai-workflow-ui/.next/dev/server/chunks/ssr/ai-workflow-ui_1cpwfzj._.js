@@ -16,12 +16,12 @@ function Home() {
     const [email, setEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [password, setPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [isSignUp, setIsSignUp] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    // --- LEAD HUNTER STATE CONTROLS ---
+    const [city, setCity] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [businessType, setBusinessType] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
-    const [tagline, setTagline] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
-    const [socialPost, setSocialPost] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [stepMessage, setStepMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
-    const [historyLog, setHistoryLog] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [statusLog, setStatusLog] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    const [leadResults, setLeadResults] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const handleAuth = (e)=>{
         e.preventDefault();
         if (!email || !password) return;
@@ -32,65 +32,78 @@ function Home() {
     };
     const handleLogout = ()=>{
         setUser(null);
-        setHistoryLog([]);
-        setTagline('');
-        setSocialPost('');
+        setLeadResults([]);
+        setCity('');
         setBusinessType('');
-        setStepMessage('');
+        setStatusLog('');
     };
-    const handleClearHistory = ()=>{
-        setHistoryLog([]);
-    };
-    const handleRunWorkflow = async (e)=>{
+    const handleHuntLeads = async (e)=>{
         e.preventDefault();
-        if (!businessType) return;
-        let formattedUrl = businessType.trim();
-        if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
-            formattedUrl = `https://${formattedUrl}`;
-        }
+        if (!city || !businessType) return;
         setIsLoading(true);
-        setTagline('');
-        setSocialPost('');
+        setLeadResults([]);
+        setStatusLog('📡 Connecting to Google Places API mapping nodes...');
         try {
-            setStepMessage(`🌐 Step 1: Routing URL to internal backend server to bypass CORS blocks...`);
-            const backendResponse = await fetch('/api/scrape', {
+            await new Promise((resolve)=>setTimeout(resolve, 1000));
+            setStatusLog(`🔍 Scanning records for "${businessType}" inside "${city}"...`);
+            const response = await fetch('/api/leads', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    url: formattedUrl
+                    city,
+                    businessType
                 })
             });
-            const scraperData = await backendResponse.json();
-            if (!backendResponse.ok) {
-                throw new Error(scraperData.error || 'Server processing failure');
-            }
-            const cleanTextSample = scraperData.textContent || "";
-            setTagline(`Scraped successfully via backend! Found text sample.`);
-            setStepMessage('🤖 Step 2: Running local linguistic transformer on scraped content...');
-            await new Promise((resolve)=>setTimeout(resolve, 1500));
-            const analysisReport = `📊 BACKEND ANALYSIS REPORT FOR CLIENT:\n\nTarget URL: ${formattedUrl}\nStatus Code: 200 OK (CORS Bypassed Successfully)\n\n💡 Key Content Extract Found:\n"${cleanTextSample.substring(0, 400)}..."\n\n🎯 Recommended Marketing Pivot:\nTarget user bases searching for keywords matching the extracted context above! #FullStack #WebAutomation`;
-            setSocialPost(analysisReport);
-            setStepMessage('✨ Saved execution profile to secure record database!');
-            const newDatabaseRow = {
-                id: Date.now(),
-                user_id: user?.id,
-                business_type: formattedUrl.replace('https://', '').replace('http://', ''),
-                tagline_output: "CORS Bypassed & Scraped",
-                social_output: analysisReport,
-                created_at: new Date().toLocaleTimeString()
-            };
-            setHistoryLog((prev)=>[
-                    newDatabaseRow,
-                    ...prev
-                ]);
+            const data = await response.json();
+            await new Promise((resolve)=>setTimeout(resolve, 1000));
+            setStatusLog(`🎯 Found ${data.totalFound} matching businesses. Filtering out accounts with active domains...`);
+            await new Promise((resolve)=>setTimeout(resolve, 800));
+            setLeadResults(data.leads);
+            setStatusLog(`⚡ Pipeline complete! Isolated ${data.leadsGenerated} high-value local targets.`);
         } catch (error) {
-            console.error(error);
-            setStepMessage(`❌ Scraper workflow halted: ${error.message}`);
+            setStatusLog('❌ Lead hunting workflow interrupted.');
         } finally{
             setIsLoading(false);
         }
+    };
+    // --- NEW WORKFLOW NODE: AUTOMATED SPREADSHEET EXPORTER ---
+    const handleExportCSV = ()=>{
+        if (leadResults.length === 0) return;
+        // 1. Define columns for spreadsheet headers
+        const headers = [
+            'Business Name',
+            'Phone Number',
+            'Google Rating',
+            'Website Status'
+        ];
+        // 2. Loop through isolated data elements and build clean text rows
+        const csvRows = [
+            headers.join(','),
+            ...leadResults.map((lead)=>[
+                    `"${lead.name.replace(/"/g, '""')}"`,
+                    `"${lead.phone}"`,
+                    `"${lead.rating}"`,
+                    `"No Website Linked"`
+                ].join(','))
+        ];
+        // 3. Compile rows into a raw text blob file format
+        const csvContent = csvRows.join('\n');
+        const blob = new Blob([
+            csvContent
+        ], {
+            type: 'text/csv;charset=utf-8;'
+        });
+        // 4. Trigger an invisible background download link right inside browser
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Leads_${businessType.trim()}_${city.trim()}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
     if (!user) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -103,24 +116,24 @@ function Home() {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                 className: "text-3xl font-extrabold text-blue-400 mb-1",
-                                children: "⚡ AI Workflow SaaS"
+                                children: "⚡ LeadHunter AI"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 98,
+                                lineNumber: 104,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-sm text-slate-400",
-                                children: isSignUp ? 'Create your client account' : 'Sign in to your client dashboard'
+                                children: "Locate high-value local business client contracts"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 99,
+                                lineNumber: 105,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 97,
+                        lineNumber: 103,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -134,7 +147,7 @@ function Home() {
                                         children: "Email Address"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 104,
+                                        lineNumber: 109,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -142,17 +155,17 @@ function Home() {
                                         required: true,
                                         value: email,
                                         onChange: (e)=>setEmail(e.target.value),
-                                        placeholder: "client@company.com",
-                                        className: "w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-sm"
+                                        placeholder: "developer@agency.com",
+                                        className: "w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-sm focus:outline-none focus:border-blue-500"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 105,
+                                        lineNumber: 110,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 103,
+                                lineNumber: 108,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -162,7 +175,7 @@ function Home() {
                                         children: "Password"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 116,
+                                        lineNumber: 113,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -171,58 +184,42 @@ function Home() {
                                         value: password,
                                         onChange: (e)=>setPassword(e.target.value),
                                         placeholder: "••••••••",
-                                        className: "w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-sm"
+                                        className: "w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-sm focus:outline-none focus:border-blue-500"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 117,
+                                        lineNumber: 114,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 115,
+                                lineNumber: 112,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 type: "submit",
                                 className: "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg text-sm transition-colors cursor-pointer",
-                                children: isSignUp ? 'Create Account' : 'Sign In'
+                                children: "Sign In to Engine"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 127,
+                                lineNumber: 116,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 102,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "mt-6 text-center text-xs",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: ()=>setIsSignUp(!isSignUp),
-                            className: "text-slate-400 hover:text-blue-400 transition-colors cursor-pointer underline",
-                            children: isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"
-                        }, void 0, false, {
-                            fileName: "[project]/ai-workflow-ui/app/page.js",
-                            lineNumber: 136,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 135,
+                        lineNumber: 107,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 96,
+                lineNumber: 102,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/ai-workflow-ui/app/page.js",
-            lineNumber: 95,
+            lineNumber: 101,
             columnNumber: 7
         }, this);
     }
@@ -230,304 +227,284 @@ function Home() {
         className: "min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center py-12 px-4",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "max-w-2xl w-full flex items-center justify-between border-b border-slate-800 pb-4 mb-8",
+                className: "max-w-3xl w-full flex items-center justify-between border-b border-slate-800 pb-4 mb-8",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                 className: "text-2xl font-black text-blue-400",
-                                children: "⚡ AI Workflow"
+                                children: "⚡ LeadHunter Framework"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 152,
+                                lineNumber: 128,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-xs text-slate-500",
                                 children: [
-                                    "Logged in as: ",
+                                    "Pipeline operator: ",
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "text-slate-300 font-mono",
                                         children: user.email
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 153,
-                                        columnNumber: 63
+                                        lineNumber: 129,
+                                        columnNumber: 68
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 153,
+                                lineNumber: 129,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 151,
+                        lineNumber: 127,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         onClick: handleLogout,
                         className: "bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-md text-xs transition-colors cursor-pointer",
-                        children: "Sign Out"
+                        children: "Disconnect Session"
                     }, void 0, false, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 155,
+                        lineNumber: 131,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 150,
+                lineNumber: 126,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "max-w-2xl w-full bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700",
+                className: "max-w-3xl w-full bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
-                        onSubmit: handleRunWorkflow,
-                        className: "space-y-4",
+                        onSubmit: handleHuntLeads,
+                        className: "grid grid-cols-1 md:grid-cols-2 gap-4",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                         className: "block text-sm font-semibold mb-2 text-slate-300",
-                                        children: "Website URL to Analyze"
+                                        children: "Target Region (City)"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 166,
+                                        lineNumber: 138,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         type: "text",
-                                        value: businessType,
-                                        onChange: (e)=>setBusinessType(e.target.value),
-                                        placeholder: "://example.com",
-                                        className: "w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-slate-100 text-sm",
+                                        required: true,
+                                        value: city,
+                                        onChange: (e)=>setCity(e.target.value),
+                                        placeholder: "e.g., St. Cloud, Minneapolis",
+                                        className: "w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 text-sm focus:outline-none focus:border-blue-500",
                                         disabled: isLoading
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 167,
+                                        lineNumber: 139,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 165,
+                                lineNumber: 137,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                        className: "block text-sm font-semibold mb-2 text-slate-300",
+                                        children: "Business Sector Niche"
+                                    }, void 0, false, {
+                                        fileName: "[project]/ai-workflow-ui/app/page.js",
+                                        lineNumber: 142,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                        type: "text",
+                                        required: true,
+                                        value: businessType,
+                                        onChange: (e)=>setBusinessType(e.target.value),
+                                        placeholder: "e.g., contractor, salon",
+                                        className: "w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 text-sm focus:outline-none focus:border-blue-500",
+                                        disabled: isLoading
+                                    }, void 0, false, {
+                                        fileName: "[project]/ai-workflow-ui/app/page.js",
+                                        lineNumber: 143,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/ai-workflow-ui/app/page.js",
+                                lineNumber: 141,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 type: "submit",
-                                disabled: isLoading || !businessType,
-                                className: "w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg transition-all text-sm cursor-pointer",
-                                children: isLoading ? 'Processing Pipeline...' : 'Run Automation Workflow'
+                                disabled: isLoading || !city || !businessType,
+                                className: "w-full md:col-span-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg text-sm transition-all cursor-pointer",
+                                children: isLoading ? 'Scanning Mapping Registries...' : 'Scrape & Isolate Website-Less Leads'
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 177,
+                                lineNumber: 145,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 164,
+                        lineNumber: 136,
                         columnNumber: 9
                     }, this),
-                    stepMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "mt-6 p-3 bg-slate-950 rounded-lg border border-slate-800 font-mono text-xs text-blue-300 flex items-center gap-2",
+                    statusLog && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "mt-4 p-3 bg-slate-950 rounded-lg border border-slate-800 font-mono text-xs text-blue-300 flex items-center gap-2",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: "animate-pulse",
                                 children: "●"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 188,
+                                lineNumber: 152,
                                 columnNumber: 13
                             }, this),
                             " ",
-                            stepMessage
+                            statusLog
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 187,
+                        lineNumber: 151,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 163,
+                lineNumber: 135,
                 columnNumber: 7
             }, this),
-            (tagline || socialPost) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "max-w-2xl w-full mt-6 space-y-4",
-                children: [
-                    tagline && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "bg-slate-800 rounded-xl p-6 border border-slate-700",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                className: "text-xs uppercase tracking-wider text-slate-400 font-bold mb-2",
-                                children: "✨ Generated Slogan"
-                            }, void 0, false, {
-                                fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 197,
-                                columnNumber: 15
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                className: "text-xl italic text-slate-200",
-                                children: [
-                                    '"',
-                                    tagline,
-                                    '"'
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 198,
-                                columnNumber: 15
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 196,
-                        columnNumber: 13
-                    }, this),
-                    socialPost && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "bg-slate-800 rounded-xl p-6 border border-slate-700",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                className: "text-xs uppercase tracking-wider text-slate-400 font-bold mb-2",
-                                children: "🎯 Client Ready Social Asset"
-                            }, void 0, false, {
-                                fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 204,
-                                columnNumber: 15
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
-                                className: "whitespace-pre-wrap font-sans text-slate-300 bg-slate-950 p-4 rounded-lg border border-slate-800 text-sm",
-                                children: socialPost
-                            }, void 0, false, {
-                                fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 205,
-                                columnNumber: 15
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 203,
-                        columnNumber: 13
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 194,
-                columnNumber: 9
-            }, this),
-            historyLog.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "max-w-2xl w-full mt-12",
+            leadResults.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "max-w-3xl w-full mt-8 space-y-4",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center justify-between mb-4",
+                        className: "flex items-center justify-between",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                className: "text-xl font-bold text-slate-300 flex items-center gap-2",
-                                children: [
-                                    "📁 Secure Database Audit Logs ",
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "text-sm font-normal text-slate-500",
-                                        children: [
-                                            "(",
-                                            historyLog.length,
-                                            ")"
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 217,
-                                        columnNumber: 45
-                                    }, this)
-                                ]
-                            }, void 0, true, {
+                                className: "text-xl font-bold text-emerald-400 flex items-center gap-2",
+                                children: "🎯 Isolated Target Client Opportunities"
+                            }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 216,
+                                lineNumber: 161,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: handleClearHistory,
-                                className: "text-xs text-red-400 hover:text-red-300 transition-colors underline cursor-pointer",
-                                children: "Clear Records"
+                                onClick: handleExportCSV,
+                                className: "bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-4 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-md",
+                                children: "📊 Export Clean Spreadsheet (.CSV)"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 219,
+                                lineNumber: 165,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 215,
+                        lineNumber: 160,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "space-y-3",
-                        children: historyLog.map((row)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "bg-slate-850 border border-slate-800 rounded-lg p-4 flex justify-between items-center text-sm",
+                        className: "grid grid-cols-1 md:grid-cols-2 gap-4",
+                        children: leadResults.map((lead, idx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-md flex flex-col justify-between space-y-4 relative overflow-hidden",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "absolute top-0 right-0 bg-red-950 text-red-400 font-mono uppercase text-[9px] font-black tracking-widest px-3 py-1 rounded-bl border-l border-b border-slate-700",
+                                        children: "⚠️ No Domain Found"
+                                    }, void 0, false, {
+                                        fileName: "[project]/ai-workflow-ui/app/page.js",
+                                        lineNumber: 176,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "font-bold text-blue-400",
-                                                children: row.business_type
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                                className: "text-lg font-black text-slate-100",
+                                                children: lead.name
                                             }, void 0, false, {
                                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                                lineNumber: 231,
+                                                lineNumber: 180,
                                                 columnNumber: 19
                                             }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                className: "text-xs text-slate-400 truncate max-w-md mt-1",
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "text-xs text-amber-400 font-bold mt-1",
                                                 children: [
-                                                    'Slogan saved: "',
-                                                    row.tagline_output,
-                                                    '"'
+                                                    "⭐ ",
+                                                    lead.rating,
+                                                    " Google Rating"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                                lineNumber: 232,
+                                                lineNumber: 181,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: "text-xs text-slate-400 mt-3 font-mono",
+                                                children: [
+                                                    "Phone: ",
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "text-slate-200",
+                                                        children: lead.phone
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/ai-workflow-ui/app/page.js",
+                                                        lineNumber: 182,
+                                                        columnNumber: 79
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/ai-workflow-ui/app/page.js",
+                                                lineNumber: 182,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 230,
+                                        lineNumber: 179,
                                         columnNumber: 17
                                     }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "text-xs text-slate-500 font-mono bg-slate-950 px-2 py-1 rounded",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "bg-slate-950 border border-slate-900 rounded-lg p-3 text-xs text-slate-300 font-serif leading-relaxed italic",
                                         children: [
-                                            "⏰ ",
-                                            row.created_at
+                                            '"Hey, I noticed your amazing ',
+                                            lead.rating,
+                                            " rating on Google maps, but you don't have a mobile landing page linked for customer booking...\""
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 234,
+                                        lineNumber: 184,
                                         columnNumber: 17
                                     }, this)
                                 ]
-                            }, row.id, true, {
+                            }, idx, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 229,
+                                lineNumber: 175,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 227,
+                        lineNumber: 173,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 214,
+                lineNumber: 159,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/ai-workflow-ui/app/page.js",
-        lineNumber: 149,
+        lineNumber: 124,
         columnNumber: 5
     }, this);
 }
