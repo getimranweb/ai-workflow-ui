@@ -26,6 +26,8 @@
 
 @layer theme {
   :root, :host {
+    --color-red-300: #ffa3a3;
+    --color-red-400: #ff6568;
     --color-blue-300: #90c5ff;
     --color-blue-400: #54a2ff;
     --color-blue-500: #3080ff;
@@ -71,6 +73,8 @@
 
   @supports (color: lab(0% 0 0)) {
     :root, :host {
+      --color-red-300: lab(76.5514% 36.422 15.5335);
+      --color-red-400: lab(63.7053% 60.745 31.3109);
       --color-blue-300: lab(77.5052% -6.4629 -36.42);
       --color-blue-400: lab(65.0361% -1.42065 -56.9802);
       --color-blue-500: lab(54.1736% 13.3369 -74.6839);
@@ -632,6 +636,10 @@
     color: var(--color-blue-400);
   }
 
+  .text-red-400 {
+    color: var(--color-red-400);
+  }
+
   .text-slate-100 {
     color: var(--color-slate-100);
   }
@@ -706,6 +714,10 @@
 
     .hover\:text-blue-400:hover {
       color: var(--color-blue-400);
+    }
+
+    .hover\:text-red-300:hover {
+      color: var(--color-red-300);
     }
   }
 

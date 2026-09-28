@@ -12,29 +12,23 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node
 ;
 ;
 function Home() {
-    // --- USER AUTHENTICATION STATE ---
-    const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null); // Keeps track of logged-in user profile
+    const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [email, setEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [password, setPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [isSignUp, setIsSignUp] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [authError, setAuthError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
-    // --- WORKFLOW DASHBOARD STATE ---
     const [businessType, setBusinessType] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [tagline, setTagline] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [socialPost, setSocialPost] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [stepMessage, setStepMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [historyLog, setHistoryLog] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
-    // --- HANDLER: Handle Simulated Sign In / Sign Up ---
     const handleAuth = (e)=>{
         e.preventDefault();
         if (!email || !password) return;
-        // Simulate successful login/signup authentication response
         setUser({
             email: email,
             id: 'usr_' + Date.now()
         });
-        setAuthError('');
     };
     const handleLogout = ()=>{
         setUser(null);
@@ -44,24 +38,28 @@ function Home() {
         setBusinessType('');
         setStepMessage('');
     };
-    // --- HANDLER: Master Workflow Submission Pipeline ---
+    const handleClearHistory = ()=>{
+        setHistoryLog([]);
+    };
     const handleRunWorkflow = async (e)=>{
         e.preventDefault();
         if (!businessType) return;
+        let formattedUrl = businessType.trim();
+        if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+            formattedUrl = `https://${formattedUrl}`;
+        }
         setIsLoading(true);
         setTagline('');
         setSocialPost('');
         try {
-            // --- WORKFLOW STEP 1: Secure Server-Side Scraping ---
             setStepMessage(`🌐 Step 1: Routing URL to internal backend server to bypass CORS blocks...`);
-            // Call our own internal Next.js backend API route
             const backendResponse = await fetch('/api/scrape', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    url: businessType
+                    url: formattedUrl
                 })
             });
             const scraperData = await backendResponse.json();
@@ -70,17 +68,15 @@ function Home() {
             }
             const cleanTextSample = scraperData.textContent || "";
             setTagline(`Scraped successfully via backend! Found text sample.`);
-            // --- WORKFLOW STEP 2: Structural Data Transformation ---
             setStepMessage('🤖 Step 2: Running local linguistic transformer on scraped content...');
             await new Promise((resolve)=>setTimeout(resolve, 1500));
-            const analysisReport = `📊 BACKEND ANALYSIS REPORT FOR CLIENT:\n\nTarget URL: ${businessType}\nStatus Code: 200 OK (CORS Bypassed Successfully)\n\n💡 Key Content Extract Found:\n"${cleanTextSample.substring(0, 400)}..."\n\n🎯 Recommended Marketing Pivot:\nTarget user bases searching for keywords matching the extracted context above! #FullStack #WebAutomation`;
+            const analysisReport = `📊 BACKEND ANALYSIS REPORT FOR CLIENT:\n\nTarget URL: ${formattedUrl}\nStatus Code: 200 OK (CORS Bypassed Successfully)\n\n💡 Key Content Extract Found:\n"${cleanTextSample.substring(0, 400)}..."\n\n🎯 Recommended Marketing Pivot:\nTarget user bases searching for keywords matching the extracted context above! #FullStack #WebAutomation`;
             setSocialPost(analysisReport);
             setStepMessage('✨ Saved execution profile to secure record database!');
-            // Update history preview logs
             const newDatabaseRow = {
                 id: Date.now(),
                 user_id: user?.id,
-                business_type: businessType.replace('https://', '').replace('http://', ''),
+                business_type: formattedUrl.replace('https://', '').replace('http://', ''),
                 tagline_output: "CORS Bypassed & Scraped",
                 social_output: analysisReport,
                 created_at: new Date().toLocaleTimeString()
@@ -96,7 +92,6 @@ function Home() {
             setIsLoading(false);
         }
     };
-    // --- AUTHENTICATION GATE SCREEN RENDER ---
     if (!user) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
             className: "min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-center p-4",
@@ -111,7 +106,7 @@ function Home() {
                                 children: "⚡ AI Workflow SaaS"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 104,
+                                lineNumber: 98,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -119,13 +114,13 @@ function Home() {
                                 children: isSignUp ? 'Create your client account' : 'Sign in to your client dashboard'
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 105,
+                                lineNumber: 99,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 103,
+                        lineNumber: 97,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -139,7 +134,7 @@ function Home() {
                                         children: "Email Address"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 110,
+                                        lineNumber: 104,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -151,13 +146,13 @@ function Home() {
                                         className: "w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-sm"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 111,
+                                        lineNumber: 105,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 109,
+                                lineNumber: 103,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -167,7 +162,7 @@ function Home() {
                                         children: "Password"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 122,
+                                        lineNumber: 116,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -179,13 +174,13 @@ function Home() {
                                         className: "w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-sm"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 123,
+                                        lineNumber: 117,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 121,
+                                lineNumber: 115,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -194,13 +189,13 @@ function Home() {
                                 children: isSignUp ? 'Create Account' : 'Sign In'
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 133,
+                                lineNumber: 127,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 108,
+                        lineNumber: 102,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -211,27 +206,26 @@ function Home() {
                             children: isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"
                         }, void 0, false, {
                             fileName: "[project]/ai-workflow-ui/app/page.js",
-                            lineNumber: 142,
+                            lineNumber: 136,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 141,
+                        lineNumber: 135,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 102,
+                lineNumber: 96,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/ai-workflow-ui/app/page.js",
-            lineNumber: 101,
+            lineNumber: 95,
             columnNumber: 7
         }, this);
     }
-    // --- MASTER WORKFLOW DASHBOARD SCREEN RENDER ---
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
         className: "min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center py-12 px-4",
         children: [
@@ -245,7 +239,7 @@ function Home() {
                                 children: "⚡ AI Workflow"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 160,
+                                lineNumber: 152,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -257,19 +251,19 @@ function Home() {
                                         children: user.email
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 161,
+                                        lineNumber: 153,
                                         columnNumber: 63
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 161,
+                                lineNumber: 153,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 159,
+                        lineNumber: 151,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -278,13 +272,13 @@ function Home() {
                         children: "Sign Out"
                     }, void 0, false, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 163,
+                        lineNumber: 155,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 158,
+                lineNumber: 150,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -298,28 +292,28 @@ function Home() {
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                         className: "block text-sm font-semibold mb-2 text-slate-300",
-                                        children: "Business Concept"
+                                        children: "Website URL to Analyze"
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 174,
+                                        lineNumber: 166,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         type: "text",
                                         value: businessType,
                                         onChange: (e)=>setBusinessType(e.target.value),
-                                        placeholder: "e.g., AI Automation Agency, Coffee Shop, Fitness App",
+                                        placeholder: "://example.com",
                                         className: "w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-slate-100 text-sm",
                                         disabled: isLoading
                                     }, void 0, false, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 175,
+                                        lineNumber: 167,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 173,
+                                lineNumber: 165,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -329,13 +323,13 @@ function Home() {
                                 children: isLoading ? 'Processing Pipeline...' : 'Run Automation Workflow'
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 185,
+                                lineNumber: 177,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 172,
+                        lineNumber: 164,
                         columnNumber: 9
                     }, this),
                     stepMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -346,7 +340,7 @@ function Home() {
                                 children: "●"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 196,
+                                lineNumber: 188,
                                 columnNumber: 13
                             }, this),
                             " ",
@@ -354,13 +348,13 @@ function Home() {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 195,
+                        lineNumber: 187,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 171,
+                lineNumber: 163,
                 columnNumber: 7
             }, this),
             (tagline || socialPost) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -374,7 +368,7 @@ function Home() {
                                 children: "✨ Generated Slogan"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 205,
+                                lineNumber: 197,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -386,13 +380,13 @@ function Home() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 206,
+                                lineNumber: 198,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 204,
+                        lineNumber: 196,
                         columnNumber: 13
                     }, this),
                     socialPost && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -403,7 +397,7 @@ function Home() {
                                 children: "🎯 Client Ready Social Asset"
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 212,
+                                lineNumber: 204,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -411,44 +405,62 @@ function Home() {
                                 children: socialPost
                             }, void 0, false, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 213,
+                                lineNumber: 205,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 211,
+                        lineNumber: 203,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 202,
+                lineNumber: 194,
                 columnNumber: 9
             }, this),
             historyLog.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "max-w-2xl w-full mt-12",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                        className: "text-xl font-bold text-slate-300 mb-4 flex items-center gap-2",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex items-center justify-between mb-4",
                         children: [
-                            "📁 Secure Database Audit Logs ",
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "text-sm font-normal text-slate-500",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                className: "text-xl font-bold text-slate-300 flex items-center gap-2",
                                 children: [
-                                    "(",
-                                    historyLog.length,
-                                    ")"
+                                    "📁 Secure Database Audit Logs ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-sm font-normal text-slate-500",
+                                        children: [
+                                            "(",
+                                            historyLog.length,
+                                            ")"
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/ai-workflow-ui/app/page.js",
+                                        lineNumber: 217,
+                                        columnNumber: 45
+                                    }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 224,
-                                columnNumber: 43
+                                lineNumber: 216,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: handleClearHistory,
+                                className: "text-xs text-red-400 hover:text-red-300 transition-colors underline cursor-pointer",
+                                children: "Clear Records"
+                            }, void 0, false, {
+                                fileName: "[project]/ai-workflow-ui/app/page.js",
+                                lineNumber: 219,
+                                columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 223,
+                        lineNumber: 215,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -463,7 +475,7 @@ function Home() {
                                                 children: row.business_type
                                             }, void 0, false, {
                                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                                lineNumber: 230,
+                                                lineNumber: 231,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -475,13 +487,13 @@ function Home() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                                lineNumber: 231,
+                                                lineNumber: 232,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 229,
+                                        lineNumber: 230,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$ai$2d$workflow$2d$ui$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -492,30 +504,30 @@ function Home() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                                        lineNumber: 233,
+                                        lineNumber: 234,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, row.id, true, {
                                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                                lineNumber: 228,
+                                lineNumber: 229,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/ai-workflow-ui/app/page.js",
-                        lineNumber: 226,
+                        lineNumber: 227,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/ai-workflow-ui/app/page.js",
-                lineNumber: 222,
+                lineNumber: 214,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/ai-workflow-ui/app/page.js",
-        lineNumber: 156,
+        lineNumber: 149,
         columnNumber: 5
     }, this);
 }

@@ -2,14 +2,11 @@
 import { useState } from 'react';
 
 export default function Home() {
-  // --- USER AUTHENTICATION STATE ---
-  const [user, setUser] = useState(null); // Keeps track of logged-in user profile
+  const [user, setUser] = useState(null); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
-  const [authError, setAuthError] = useState('');
 
-  // --- WORKFLOW DASHBOARD STATE ---
   const [businessType, setBusinessType] = useState('');
   const [tagline, setTagline] = useState('');
   const [socialPost, setSocialPost] = useState('');
@@ -17,14 +14,10 @@ export default function Home() {
   const [stepMessage, setStepMessage] = useState('');
   const [historyLog, setHistoryLog] = useState([]);
 
-  // --- HANDLER: Handle Simulated Sign In / Sign Up ---
   const handleAuth = (e) => {
     e.preventDefault();
     if (!email || !password) return;
-    
-    // Simulate successful login/signup authentication response
     setUser({ email: email, id: 'usr_' + Date.now() });
-    setAuthError('');
   };
 
   const handleLogout = () => {
@@ -36,49 +29,53 @@ export default function Home() {
     setStepMessage('');
   };
 
-  // --- HANDLER: Master Workflow Submission Pipeline ---
+  const handleClearHistory = () => {
+    setHistoryLog([]);
+  };
+
   const handleRunWorkflow = async (e) => {
     e.preventDefault();
     if (!businessType) return;
-  
+
+    let formattedUrl = businessType.trim();
+    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+      formattedUrl = `https://${formattedUrl}`;
+    }
+
     setIsLoading(true);
     setTagline('');
     setSocialPost('');
-  
+
     try {
-      // --- WORKFLOW STEP 1: Secure Server-Side Scraping ---
       setStepMessage(`🌐 Step 1: Routing URL to internal backend server to bypass CORS blocks...`);
       
-      // Call our own internal Next.js backend API route
       const backendResponse = await fetch('/api/scrape', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: businessType })
+        body: JSON.stringify({ url: formattedUrl })
       });
-  
+
       const scraperData = await backendResponse.json();
-  
+
       if (!backendResponse.ok) {
         throw new Error(scraperData.error || 'Server processing failure');
       }
-  
+
       const cleanTextSample = scraperData.textContent || "";
       setTagline(`Scraped successfully via backend! Found text sample.`);
-  
-      // --- WORKFLOW STEP 2: Structural Data Transformation ---
+
       setStepMessage('🤖 Step 2: Running local linguistic transformer on scraped content...');
       await new Promise((resolve) => setTimeout(resolve, 1500));
       
-      const analysisReport = `📊 BACKEND ANALYSIS REPORT FOR CLIENT:\n\nTarget URL: ${businessType}\nStatus Code: 200 OK (CORS Bypassed Successfully)\n\n💡 Key Content Extract Found:\n"${cleanTextSample.substring(0, 400)}..."\n\n🎯 Recommended Marketing Pivot:\nTarget user bases searching for keywords matching the extracted context above! #FullStack #WebAutomation`;
+      const analysisReport = `📊 BACKEND ANALYSIS REPORT FOR CLIENT:\n\nTarget URL: ${formattedUrl}\nStatus Code: 200 OK (CORS Bypassed Successfully)\n\n💡 Key Content Extract Found:\n"${cleanTextSample.substring(0, 400)}..."\n\n🎯 Recommended Marketing Pivot:\nTarget user bases searching for keywords matching the extracted context above! #FullStack #WebAutomation`;
       setSocialPost(analysisReport);
-  
+
       setStepMessage('✨ Saved execution profile to secure record database!');
-  
-      // Update history preview logs
+
       const newDatabaseRow = {
         id: Date.now(),
         user_id: user?.id,
-        business_type: businessType.replace('https://', '').replace('http://', ''),
+        business_type: formattedUrl.replace('https://', '').replace('http://', ''),
         tagline_output: "CORS Bypassed & Scraped",
         social_output: analysisReport,
         created_at: new Date().toLocaleTimeString()
@@ -92,10 +89,7 @@ export default function Home() {
       setIsLoading(false);
     }
   };
-  
-  
 
-  // --- AUTHENTICATION GATE SCREEN RENDER ---
   if (!user) {
     return (
       <main className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-center p-4">
@@ -151,10 +145,8 @@ export default function Home() {
     );
   }
 
-  // --- MASTER WORKFLOW DASHBOARD SCREEN RENDER ---
   return (
     <main className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center py-12 px-4">
-      {/* Top Navbar Header */}
       <div className="max-w-2xl w-full flex items-center justify-between border-b border-slate-800 pb-4 mb-8">
         <div>
           <h1 className="text-2xl font-black text-blue-400">⚡ AI Workflow</h1>
@@ -171,12 +163,12 @@ export default function Home() {
       <div className="max-w-2xl w-full bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700">
         <form onSubmit={handleRunWorkflow} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold mb-2 text-slate-300">Business Concept</label>
+            <label className="block text-sm font-semibold mb-2 text-slate-300">Website URL to Analyze</label>
             <input
               type="text"
               value={businessType}
               onChange={(e) => setBusinessType(e.target.value)}
-              placeholder="e.g., AI Automation Agency, Coffee Shop, Fitness App"
+              placeholder="://example.com"
               className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-slate-100 text-sm"
               disabled={isLoading}
             />
@@ -220,9 +212,18 @@ export default function Home() {
 
       {historyLog.length > 0 && (
         <div className="max-w-2xl w-full mt-12">
-          <h2 className="text-xl font-bold text-slate-300 mb-4 flex items-center gap-2">
-            📁 Secure Database Audit Logs <span className="text-sm font-normal text-slate-500">({historyLog.length})</span>
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-300 flex items-center gap-2">
+              📁 Secure Database Audit Logs <span className="text-sm font-normal text-slate-500">({historyLog.length})</span>
+            </h2>
+            <button
+              onClick={handleClearHistory}
+              className="text-xs text-red-400 hover:text-red-300 transition-colors underline cursor-pointer"
+            >
+              Clear Records
+            </button>
+          </div>
+          
           <div className="space-y-3">
             {historyLog.map((row) => (
               <div key={row.id} className="bg-slate-850 border border-slate-800 rounded-lg p-4 flex justify-between items-center text-sm">
