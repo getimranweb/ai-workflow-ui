@@ -155,7 +155,7 @@ export default function Home() {
       </div>
 
       {/* Target Output Canvas */}
-      {leadResults.length > 0 && (
+      {leadResults && leadResults.length > 0 && (
         <div className="max-w-3xl w-full mt-8 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-emerald-400 flex items-center gap-2">
