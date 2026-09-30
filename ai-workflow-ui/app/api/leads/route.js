@@ -1,92 +1,192 @@
-import { NextResponse } from 'next/server';
-import * as cheerio from 'cheerio';
+import { isAuthorized, unauthorized } from '@/lib/auth';
 
-export async function POST(request) {
+const PLACES_URL = 'https://places.googleapis.com/v1/places:searchText';
+const FIELD_MASK = [
+  'places.id',
+  'places.displayName',
+  'places.formattedAddress',
+  'places.nationalPhoneNumber',
+  'places.websiteUri',
+  'places.rating',
+  'places.userRatingCount',
+  'places.googleMapsUri',
+  'places.businessStatus',
+  'nextPageToken',
+].join(',');
+
+// Each page is one billed Text Search request (up to 20 results).
+const MAX_PAGES = 3;
+
+const SOCIAL_HOSTS = [
+  'facebook.com', 'fb.com', 'instagram.com', 'linktr.ee', 'tiktok.com',
+  'x.com', 'twitter.com', 'yelp.com', 'nextdoor.com',
+];
+
+const BOOKING_HOSTS = [
+  'vagaro.com', 'booksy.com', 'fresha.com', 'styleseat.com', 'square.site',
+  'squareup.com', 'glossgenius.com', 'schedulicity.com', 'setmore.com',
+  'toasttab.com', 'doordash.com', 'grubhub.com', 'ubereats.com',
+];
+
+const DEAD_PAGE_MARKERS = [
+  "isn't connected to a website yet",
+  'domain is not connected',
+  'this domain may be for sale',
+  'domain is for sale',
+  'buy this domain',
+  'parked free',
+  'domain has expired',
+  'site not found',
+  'account suspended',
+  'website coming soon',
+];
+
+function hostOf(url) {
   try {
-    const { city, businessType } = await request.json();
-    
-    if (!city || !businessType) {
-      return NextResponse.json({ error: 'City and Business Type are required' }, { status: 400 });
-    }
+    return new URL(url).hostname.replace(/^www\./, '').toLowerCase();
+  } catch {
+    return '';
+  }
+}
 
-    console.log(`📡 Live Server Scan Triggered: Hunting for ${businessType} in ${city}...`);
+function matchesHost(host, list) {
+  return list.some((h) => host === h || host.endsWith(`.${h}`));
+}
 
-    const searchNiche = encodeURIComponent(businessType.trim().toLowerCase());
-    const searchLocation = encodeURIComponent(city.trim().toLowerCase());
-    const targetUrl = `https://yellowpages.com{searchNiche}&geo_location=${searchLocation}`;
-    
-    let discoveredBusinesses = [];
+async function searchPlaces(query, apiKey) {
+  const places = [];
+  let pageToken;
 
-    try {
-      const response = await fetch(targetUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        }
-      });
-
-      if (response.ok) {
-        const htmlData = await response.text();
-        const cheerioInstance = cheerio.load(htmlData);
-
-        cheerioInstance('.search-results .result').each((index, element) => {
-          if (index >= 10) return; 
-          const el = cheerioInstance(element);
-          const name = el.find('a.business-name').text().trim();
-          const phone = el.find('.phone').text().trim() || "No phone listed";
-          const websiteUrl = el.find('a.track-visit-website').attr('href') || null;
-          const hasRating = el.find('.ratings').length > 0;
-          const rating = hasRating ? parseFloat((4.2 + Math.random() * 0.7).toFixed(1)) : 4.5;
-
-          if (name) {
-            discoveredBusinesses.push({ name, phone, website: websiteUrl, rating });
-          }
-        });
-      }
-    } catch (e) {
-      console.log("Live node firewall active. Switching to dynamic fail-safe data engine...");
-    }
-
-    // --- AUTOMATED FALLBACK DATA PIPELINE ---
-    // If the live request returned 0 rows due to an IP block, generate dynamic local targets based on user inputs
-    if (discoveredBusinesses.length === 0) {
-      const formattedCity = city.trim();
-      const formattedNiche = businessType.trim().toLowerCase();
-
-      if (formattedNiche.includes("salon")) {
-        discoveredBusinesses = [
-          { name: `Beauty Room ${formattedCity}`, phone: "(952) 442-0097", website: null, rating: 4.8 },
-          { name: `Off the Top Hairstyling`, phone: "(952) 442-1777", website: null, rating: 4.5 },
-          { name: `Jazzy J Salon & Spa`, phone: "(952) 555-0912", website: "https://jazzyjsalon.com", rating: 4.2 },
-          { name: `${formattedCity} Nail Care`, phone: "(952) 555-0341", website: null, rating: 4.6 }
-        ];
-      } else if (formattedNiche.includes("contractor") || formattedNiche.includes("plumb")) {
-        discoveredBusinesses = [
-          { name: `${formattedCity} Premier Trades`, phone: "(612) 555-8811", website: null, rating: 4.4 },
-          { name: `Lakeside Mechanical & Roofing`, phone: "(952) 555-0199", website: "https://lakesidemechanic.com", rating: 4.7 },
-          { name: `Apex Construction Group`, phone: "(612) 555-0143", website: null, rating: 4.1 }
-        ];
-      } else {
-        // General fallback template for any other business sector query typed
-        discoveredBusinesses = [
-          { name: `Elite ${businessType} of ${formattedCity}`, phone: "(952) 555-7722", website: null, rating: 4.5 },
-          { name: `${formattedCity} Central Hub`, phone: "(952) 555-1133", website: "https://centralhub.com", rating: 4.3 },
-          { name: `Main Street Trades & Services`, phone: "(612) 555-9944", website: null, rating: 4.6 }
-        ];
-      }
-    }
-
-    // Isolate targets with no active domain links
-    const highValueLeads = discoveredBusinesses.filter(business => business.website === null);
-
-    return NextResponse.json({ 
-      success: true,
-      searchQuery: `${businessType} in ${city}`,
-      totalFound: discoveredBusinesses.length,
-      leadsGenerated: highValueLeads.length,
-      leads: highValueLeads 
+  for (let page = 0; page < MAX_PAGES; page++) {
+    const res = await fetch(PLACES_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': apiKey,
+        'X-Goog-FieldMask': FIELD_MASK,
+      },
+      body: JSON.stringify({ textQuery: query, pageSize: 20, ...(pageToken && { pageToken }) }),
+      cache: 'no-store',
     });
 
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data?.error?.message || `Google Places error ${res.status}`);
+    }
+
+    places.push(...(data.places || []));
+    pageToken = data.nextPageToken;
+    if (!pageToken) break;
+  }
+
+  return places;
+}
+
+// Returns null when the site looks healthy, otherwise a short problem label.
+async function checkWebsite(url) {
+  const host = hostOf(url);
+  if (matchesHost(host, SOCIAL_HOSTS)) return { problem: 'Social page only', detail: host };
+  if (matchesHost(host, BOOKING_HOSTS)) return { problem: 'Booking/ordering page only', detail: host };
+
+  try {
+    const res = await fetch(url, {
+      redirect: 'follow',
+      signal: AbortSignal.timeout(8000),
+      headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' },
+      cache: 'no-store',
+    });
+
+    // Bot walls (401/403/429) mean a real site is there; don't flag those.
+    if (res.status === 404 || res.status === 410 || res.status >= 500) {
+      return { problem: 'Broken website', detail: `Returns error ${res.status}` };
+    }
+
+    const finalHost = hostOf(res.url);
+    if (matchesHost(finalHost, SOCIAL_HOSTS)) return { problem: 'Social page only', detail: finalHost };
+
+    const html = (await res.text()).slice(0, 200_000).toLowerCase();
+    const marker = DEAD_PAGE_MARKERS.find((m) => html.includes(m));
+    if (marker) return { problem: 'Broken website', detail: `Page says “${marker}”` };
+
+    return null;
+  } catch (err) {
+    const reason = err?.name === 'TimeoutError' ? 'Took over 8 seconds to load' : 'Could not be reached';
+    return { problem: 'Broken website', detail: reason };
+  }
+}
+
+async function mapWithLimit(items, limit, fn) {
+  const results = new Array(items.length);
+  let next = 0;
+  async function worker() {
+    while (next < items.length) {
+      const i = next++;
+      results[i] = await fn(items[i]);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+export async function POST(request) {
+  if (!isAuthorized(request)) return unauthorized();
+
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  if (!apiKey) {
+    return Response.json({ error: 'GOOGLE_MAPS_API_KEY is missing from .env.local' }, { status: 500 });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: 'Invalid request' }, { status: 400 });
+  }
+
+  const city = String(body.city || '').trim();
+  const businessType = String(body.businessType || '').trim();
+  const state = String(body.state || 'MN').trim();
+  if (!city || !businessType) {
+    return Response.json({ error: 'City and business type are required' }, { status: 400 });
+  }
+
+  const query = `${businessType} in ${city}, ${state}`;
+
+  try {
+    const places = (await searchPlaces(query, apiKey)).filter(
+      (p) => !p.businessStatus || p.businessStatus === 'OPERATIONAL'
+    );
+
+    const checked = await mapWithLimit(places, 8, async (p) => {
+      const issue = p.websiteUri
+        ? await checkWebsite(p.websiteUri)
+        : { problem: 'No website', detail: 'No website on Google listing' };
+
+      return {
+        id: p.id,
+        name: p.displayName?.text || 'Unknown',
+        address: p.formattedAddress || '',
+        phone: p.nationalPhoneNumber || '',
+        website: p.websiteUri || '',
+        rating: p.rating ?? null,
+        reviewCount: p.userRatingCount ?? 0,
+        mapsUrl: p.googleMapsUri || '',
+        problem: issue?.problem || null,
+        problemDetail: issue?.detail || '',
+      };
+    });
+
+    const leads = checked
+      .filter((b) => b.problem)
+      .sort((a, b) => b.reviewCount - a.reviewCount);
+
+    return Response.json({
+      searchQuery: query,
+      totalFound: checked.length,
+      leadsFound: leads.length,
+      leads,
+    });
+  } catch (err) {
+    return Response.json({ error: err.message }, { status: 502 });
   }
 }
